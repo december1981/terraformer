@@ -24,9 +24,15 @@ func (g *ServiceGenerator) setVaultClient() error {
 	if err != nil {
 		return err
 	}
+
 	if g.Args["token"] != "" {
 		client.SetToken(g.Args["token"].(string))
 	}
+
+	if g.Args["namespace"] != "" {
+		client.SetNamespace(g.Args["namespace"].(string))
+	}
+
 	g.client = client
 	return nil
 }

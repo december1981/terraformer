@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//	http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,14 +21,14 @@ import (
 )
 
 func newCmdVaultImporter(options ImportOptions) *cobra.Command {
-	var token, address string
+	var token, address, namespace string
 	cmd := &cobra.Command{
 		Use:   "vault",
 		Short: "Import current state to Terraform configuration from Vault",
 		Long:  "Import current state to Terraform configuration from Vault",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			provider := newVaultProvider()
-			err := Import(provider, options, []string{address, token})
+			err := Import(provider, options, []string{address, token, namespace})
 			if err != nil {
 				return err
 			}
@@ -39,6 +39,7 @@ func newCmdVaultImporter(options ImportOptions) *cobra.Command {
 	cmd.AddCommand(listCmd(newVaultProvider()))
 	cmd.PersistentFlags().StringVarP(&address, "address", "a", "", "env param VAULT_ADDR")
 	cmd.PersistentFlags().StringVarP(&token, "token", "t", "", "env param VAULT_TOKEN")
+	cmd.PersistentFlags().StringVar(&namespace, "namespace", "", "vault namespace")
 	baseProviderFlags(cmd.PersistentFlags(), &options, "", "")
 	return cmd
 }

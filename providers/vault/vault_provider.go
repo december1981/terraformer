@@ -11,8 +11,9 @@ import (
 
 type Provider struct {
 	terraformutils.Provider
-	token   string
-	address string
+	token     string
+	address   string
+	namespace string
 }
 
 func (p *Provider) Init(args []string) error {
@@ -33,13 +34,18 @@ func (p *Provider) Init(args []string) error {
 		p.token = args[1]
 	}
 
+	if len(args) > 2 && args[2] != "" {
+		p.namespace = args[2]
+	}
+
 	return nil
 }
 
 func (p *Provider) GetConfig() cty.Value {
 	return cty.ObjectVal(map[string]cty.Value{
-		"token":   cty.StringVal(p.token),
-		"address": cty.StringVal(p.address),
+		"token":     cty.StringVal(p.token),
+		"address":   cty.StringVal(p.address),
+		"namespace": cty.StringVal(p.namespace),
 	})
 }
 
@@ -54,8 +60,9 @@ func (p *Provider) InitService(serviceName string, verbose bool) error {
 		p.Service.SetVerbose(verbose)
 		p.Service.SetProviderName(p.GetName())
 		p.Service.SetArgs(map[string]interface{}{
-			"token":   p.token,
-			"address": p.address,
+			"token":     p.token,
+			"address":   p.address,
+			"namespace": p.namespace,
 		})
 		if err := service.(*ServiceGenerator).setVaultClient(); err != nil {
 			return err
